@@ -83,4 +83,4 @@ while buffer.lower() == 'y':
     pols.append((name, ', '.join(vals)))
     buffer = input('Add another policy? [y/N] ')
 
-fill_template('./src/Authority.v', [('config_lookups', '\n  '.join([f'| "{pol[0]}" => ({pol[1]})' for pol in pols]))])
+fill_template('./src/Authority.v', [('config_lookups', '\n  '.join([f'| "{pol[0]}" => Some ({pol[1]})' for pol in pols]))])

@@ -1,4 +1,5 @@
 Require Import Coq.Lists.List.
+Require Import Coq.Strings.String.
 Require Import Io.All.
 Require Import Io.System.All.
 Require Import ListString.All.
@@ -9,6 +10,7 @@ Require Import Blocki.
 Import ListNotations.
 Import C.Notations.
 
+Open Scope string_scope.
 
 Definition Configuration : Type :=
   ({{ config_params }}).
@@ -26,10 +28,10 @@ Fixpoint determine (n : nat) : C.t System.effect unit :=
     System.log (LString.s "End of input.")
   end.
 
-Definition lookup_config (name : string) : Maybe Configuration :=
+Definition lookup_config (name : string) : option Configuration :=
   match name with
   {{ config_lookups }}
-  | _ => Nothing
+  | _ => None
   end.
 
 Definition authority (argv : list LString.t) : C.t System.effect unit :=
@@ -38,4 +40,4 @@ Definition authority (argv : list LString.t) : C.t System.effect unit :=
   determine 10.
 
 Definition main := Extraction.launch authority.
-Extraction "extraction/authority" main.
+Extraction "authority" main.
