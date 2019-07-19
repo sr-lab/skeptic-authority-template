@@ -18,12 +18,23 @@ Definition Configuration : Type :=
 Definition transform (config : Configuration) : list MetaRule :=
   [].
 
-Fixpoint determine (n : nat) : C.t System.effect unit :=
+Fixpoint complies_all (mr : list MetaRule) (p : string) : bool :=
+  match mr with
+  | x :: mr' => x p && complies_all mr' p
+  | _ => true
+  end.
+
+Fixpoint determine (p : list MetaRule) (n : nat) : C.t System.effect unit :=
   match n with
   | S n' =>
     let! pwd := System.read_line in
-    do! System.log (LString.s "") in
-    determine n'
+    match pwd with
+    | None => ret tt
+    | Some pwd' =>
+    do! System.log (if complies_all p (LString.to_string pwd') then (LString.s "permitted") else (LString.s "Prohibited")) in
+          determine p n'
+    end
+  
   | Z =>
     System.log (LString.s "End of input.")
   end.
@@ -35,9 +46,16 @@ Definition lookup_config (name : string) : option Configuration :=
   end.
 
 Definition authority (argv : list LString.t) : C.t System.effect unit :=
-  (* Take count, take policy name. *)
-  (* TODO: Look up name, transform it, apply it. *)
-  determine 10.
+  match argv with
+  | _ :: policy :: count :: [] =>
+    match lookup_config (LString.to_string policy) with
+      | Some dd =>
+        determine (transform dd) (nat_of_string (LString.to_string count))
+      | None => ret tt
+    end
+  | _ => ret tt
+  end.
+
 
 Definition main := Extraction.launch authority.
 Extraction "authority" main.
