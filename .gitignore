@@ -34,3 +34,5 @@ Makefile_Coq
 Makefile_Coq.conf
 _build
 *.v~
+*.ml
+*.mli
