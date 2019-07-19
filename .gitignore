@@ -28,3 +28,9 @@ lia.cache
 nia.cache
 nlia.cache
 nra.cache
+*.coqdeps.d
+_CoqProject
+Makefile_Coq
+Makefile_Coq.conf
+_build
+*.v~
