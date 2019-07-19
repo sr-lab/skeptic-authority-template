@@ -44,7 +44,7 @@ def fill_template (path, subs):
     Args:
         path (str): The path of the target file.
     """
-    replace_in_file(path, list(map(bracket_sub, subs)))
+    replace_in_file(path, [bracket_sub(sub) for sub in subs])
 
 
 # Makefile in and out paths.
@@ -59,3 +59,28 @@ print('Copied', MAKEFILE_DIST, 'to', MAKEFILE_OUT)
 root_ns = input('What root namespace would you like your code to reside under? ')
 fill_template('./src/Makefile', [('root_ns', root_ns)])
 print('Root namespace populated in', MAKEFILE_OUT)
+
+# Gather config params from user.
+config_params = []
+buffer = input('Would you like to build your policy configuration parameters interactively now? [y/N] ')
+while buffer.lower() == 'y':
+    name = input('Please name your parameter: ')
+    type = input(f'For parameter {name} please specify a type: ')
+    config_params.append((name, type))
+    buffer = input('Add another parameter? [y/N] ')
+
+# Export config  params to template.
+fill_template('./src/Authority.v', [('config_params', ' * '.join([param[1] for param in config_params]))])
+
+buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
+pols = []
+while buffer.lower() == 'y':
+    name = input('Please name your policy: ')
+    vals = []
+    for config_param in config_params:
+        val = input(f'For parameter {config_param[0]} please specify a value in type {config_param[1]}: ')
+        vals.append(val)
+    pols.append((name, ', '.join(vals)))
+    buffer = input('Add another policy? [y/N] ')
+
+fill_template('./src/Authority.v', [('config_lookups', '\n  '.join([f'| "{pol[0]}" => ({pol[1]})' for pol in pols]))])
