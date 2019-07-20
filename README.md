@@ -4,14 +4,14 @@ A basic template for a Skeptic authority.
 ## Overview
 A Skeptic _authority_ is an application, written in Coq and utilising [Coq.io](http://coq.io/), that accepts or rejects passwords based on password composition policies refined from  configuration parameters specified with respect to some piece of password composition policy enforecment software. Because we do this from within Coq, we are granted the freedom to write theorems to verify that our transformation of software-specific configuration parameters to a low-level predicate-based representation of password composition policies is correct.
 
-The low-level model of password composition policies used in this library is based on [the 2013 work by Blocki et al.](https://arxiv.org/pdf/1302.5101.pdf) extended with meta-rules, which are just predicates that allow us to create rules from attacks using set abstraction.
+The low-level model of password composition policies used in this library is based on [the 2013 work by Blocki et al.](https://arxiv.org/pdf/1302.5101.pdf) \[1\] extended with meta-rules, which are just predicates that allow us to create rules from attacks using set abstraction.
 
 ## Prerequisites
 To build and use this project, the following software is required:
 
-* Python v3.6.8 [[^](https://www.python.org/downloads/)]
-* Coq v8.8.1 [[^](https://github.com/coq/coq/wiki/Installation-of-Coq-on-Linux)]
-* Coq.io v3.1.0 [[^](http://coq.io/getting_started.html)]
+* Python v3.6.8 \[[^](https://www.python.org/downloads/)\]
+* Coq v8.8.1 \[[^](https://github.com/coq/coq/wiki/Installation-of-Coq-on-Linux)\]
+* Coq.io v3.1.0 \[[^](http://coq.io/getting_started.html)\]
 
 Other versions of the above might work, but haven't been tested. Definitely *will not* work with Python 2. Other utilities including `ocamlfind`, `ocamlbuild` etc. are required too, but should be installable via opam without too much of an issue if not already present.
 
@@ -173,3 +173,6 @@ A total of 10 passwords will be read before the application exits, like we speci
 
 ## Utility
 Compiled Skeptic authorities can be used with [Pyrrho](https://github.com/sr-lab/pyrrho) to filter and renormalise password probability distributions computed from large datasets. For instructions on doing this, consult that repository.
+
+## References
+1. Blocki, Jeremiah & Komanduri, Saranga & Procaccia, Ariel & Sheffet, Or. (2013). Optimizing Password Composition Policies. 10.1145/2482540.2482552. \[[PDF](https://arxiv.org/pdf/1302.5101.pdf)\]
