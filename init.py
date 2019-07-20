@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 from shutil import copyfile
 
 
@@ -96,7 +97,8 @@ while buffer.lower() == 'y':
 fill_template(AUTH_OUT, [('config_lookups', '\n  '.join([f'| "{pol[0]}" => Some ({pol[1]})' for pol in pols]))])
 
 # Delete templates if requested.
-buffer = input('All done, delete template files? [y/N] ')
+buffer = input('All done, delete template files and this script now? [y/N] ')
 if buffer == 'y':
     os.remove(MAKEFILE_DIST)
     os.remove(AUTH_DIST)
+    os.remove(sys.argv[0])
