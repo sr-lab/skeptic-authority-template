@@ -6,6 +6,15 @@ A Skeptic _authority_ is an application, written in Coq and utilising [Coq.io](h
 
 The low-level model of password composition policies used in this library is based on [the 2013 work by Blocki et al.](https://arxiv.org/pdf/1302.5101.pdf) extended with meta-rules, which are just predicates that allow us to create rules from attacks using set abstraction.
 
+## Prerequisites
+To build and use this project, the following software is required:
+
+* Python v3.6.8 [[^](https://www.python.org/downloads/)]
+* Coq v8.8.1 [[^](https://github.com/coq/coq/wiki/Installation-of-Coq-on-Linux)]
+* Coq.io v3.1.0 [[^](http://coq.io/getting_started.html)]
+
+Other versions of the above might work, but haven't been tested. Definitely *will not* work with Python 2. Other utilities including `ocamlfind`, `ocamlbuild` etc. are required too, but should be installable via opam without too much of an issue if not already present.
+
 ## Setup
 Every piece of password composition policy enforecment software is different. For this reason, it's necessary to specify the type of their configuration options before we get started writing any proofs etc. An interactive script named `init.py` is provided to get you started with this. What follows is an example of how we would go about setting this project up for a piece of hypothetical password composition policy enforcement software that takes password length, required number of digits and a blacklist as input.
 
@@ -161,3 +170,6 @@ true
 ```
 
 A total of 10 passwords will be read before the application exits, like we specified when we invoked it.
+
+## Utility
+Compiled Skeptic authorities can be used with [Pyrrho](https://github.com/sr-lab/pyrrho) to filter and renormalise password probability distributions computed from large datasets. For instructions on doing this, consult that repository.
