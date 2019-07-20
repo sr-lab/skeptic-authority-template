@@ -79,8 +79,9 @@ while buffer.lower() == 'y':
     config_params.append((name, type))
     buffer = input('Add another parameter? [y/N] ')
 
-# Export config params to template.
-fill_template(AUTH_OUT, [('config_params', ' * '.join([param[1] for param in config_params]))])
+# Export config params and names to template.
+fill_template(AUTH_OUT, [('config_param_types', ' * '.join([param[1] for param in config_params]))])
+fill_template(AUTH_OUT, [('config_param_names', ', '.join([param[0] for param in config_params]))])
 
 buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
 pols = []

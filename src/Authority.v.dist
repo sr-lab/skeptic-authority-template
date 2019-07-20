@@ -16,14 +16,16 @@ Open Scope string_scope.
     software configuration parameters.
   *)
 Definition Configuration : Type :=
-  ({{ config_params }}).
+  ({{ config_param_types }}).
 
 (** Transforms a tuple containing software-specific configuration parameters
     to a list of meta-rules.
     - [config] is the tuple to transform
   *)
 Definition transform (config : Configuration) : list MetaRule :=
-  [].
+  match config with
+  | ({{ config_param_names }}) => []
+  end.
 
 (** Checks that a given password complies with every meta-rule in a list.
     - [rules] is the list of meta-rules
