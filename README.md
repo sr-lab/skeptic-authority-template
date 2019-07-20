@@ -91,7 +91,7 @@ Definition Configuration : Type :=
 
 Also notice that a lookup has been generated for finding configuration parameters based on policy name:
 
-```Coq
+```coq
 (** Looks up a configuration parameters tuple by name.
     - [name] is the name of the tuple to look up
   *)
@@ -104,3 +104,60 @@ Definition lookup_config (name : string) : option Configuration :=
   | _ => None
   end.
 ```
+
+Note, however, that the all-important `transform` function which turns values in `Configuration` into lists of meta-rules in `list MetaRule` just returns an empty list, though the pattern matching on the tuple has been added in for you based on the names you specified earlier. It's now up to you to specify and verify the semantics for transformation of your `Configuration` type into a list of predicates.
+
+```coq
+(** Transforms a tuple containing software-specific configuration parameters
+    to a list of meta-rules.
+    - [config] is the tuple to transform
+  *)
+Definition transform (config : Configuration) : list MetaRule :=
+  match config with
+  | (len, digits, dict) => []
+  end.
+```
+
+For now, let's just add in a predicate that checks string length as below. Adding in functionality such that `digits` and `dict` are no longer ignored is left out for the purposes of this demonstration.
+
+```coq
+(** Transforms a tuple containing software-specific configuration parameters
+    to a list of meta-rules.
+    - [config] is the tuple to transform
+  *)
+Definition transform (config : Configuration) : list MetaRule :=
+  match config with
+  | (len, digits, dict) => [(fun x => Nat.leb len (length x))]
+  end.
+```
+
+## Building
+After completing setup above, it's now possible to build the authority application itself.
+
+```bash
+cd ./src
+make authority
+```
+
+An application called `authority.native` is extracted and built from the Coq code. Running this like so, we'll be prompted for input:
+
+```bash
+./authority.native basic8 10
+```
+
+Try typing in a few passwords. Notice that the application accepts or rejects them based on the policy specified:
+
+```bash
+password
+true
+123456
+false
+foo
+false
+bar
+false
+longpass
+true
+```
+
+A total of 10 passwords will be read before the application exits, like we specified when we invoked it.
