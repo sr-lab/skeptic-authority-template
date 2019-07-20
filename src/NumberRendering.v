@@ -31,7 +31,7 @@ Section NumberRendering.
   Local Close Scope Q_scope.
 
   Local Close Scope string_scope.
-  
+
   (** Converts a string to a whole number or 0 if it does not make sense.
       - [s] is the string to convert
     *)
@@ -59,7 +59,7 @@ Section NumberRendering.
     *)
   Definition pos_of_string (s : string) : positive :=
     match int_of_string s with
-    | Some s' => 
+    | Some s' =>
       match Pos.of_int s' with
       | Some s'' => s''
       | None => 1
@@ -74,4 +74,3 @@ Section NumberRendering.
     Z.to_nat (z_of_string s).
 
 End NumberRendering.
-

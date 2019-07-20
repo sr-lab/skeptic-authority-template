@@ -12,18 +12,33 @@ Import C.Notations.
 
 Open Scope string_scope.
 
+(** Definition of the data type for the password composition policy enforcement
+    software configuration parameters.
+  *)
 Definition Configuration : Type :=
   ({{ config_params }}).
 
+(** Transforms a tuple containing software-specific configuration parameters
+    to a list of meta-rules.
+    - [config] is the tuple to transform
+  *)
 Definition transform (config : Configuration) : list MetaRule :=
   [].
 
+(** Checks that a given password complies with every meta-rule in a list.
+    - [rules] is the list of meta-rules
+    - [pwd] is the password
+  *)
 Fixpoint complies_all (rules : list MetaRule) (pwd : string) : bool :=
   match rules with
   | rule :: rules' => rule pwd && complies_all rules' pwd
   | _ => true
   end.
 
+(** Determines and prints Boolean compliance for passwords given as input.
+    - [rules] is the list of meta-rules given passwords must comply with
+    - [n] is the number of passwords to take as input
+  *)
 Fixpoint determine (rules : list MetaRule) (n : nat) : C.t System.effect unit :=
   match n with
   | S n' =>
@@ -39,12 +54,18 @@ Fixpoint determine (rules : list MetaRule) (n : nat) : C.t System.effect unit :=
   | Z => ret tt
   end.
 
+(** Looks up a configuration parameters tuple by name.
+    - [name] is the name of the tuple to look up
+  *)
 Definition lookup_config (name : string) : option Configuration :=
   match name with
   {{ config_lookups }}
   | _ => None
   end.
 
+(** The main method of the application.
+    - [argv] is the list of command-line arguments
+  *)
 Definition authority (argv : list LString.t) : C.t System.effect unit :=
   match argv with
   | _ :: config_name :: count :: [] =>

@@ -58,15 +58,15 @@ Definition Attack := set Password.
 (* Going from our types to types from Blocki et al. *)
 
 (** Applies a meta-rule to an attack to yield a rule under that attack.
-  *   1. `a` is the attack under which to consider the meta-rule `r`
-  *   2. `r` is the meta-rule to use to form a rule under attack `a`
+    - [a] is the attack under which to consider the meta-rule `r`
+    - [r] is the meta-rule to use to form a rule under attack `a`
   *)
 Definition get_rule (a : Attack) (r : MetaRule) : Rule :=
   filter r a.
 
 (** Applies a list of meta-rules to an attack `a` to yield a list of rules under that attack.
-  *   1. `a` is the attack under which to consider the list of meta-rules `r`
-  *   2. `r` is the list of meta-rules to use to form a list of rules under attack `a`
+    - [a] is the attack under which to consider the list of meta-rules `r`
+    - [r] is the list of meta-rules to use to form a list of rules under attack `a`
   *)
 Definition get_rule_list (a : Attack) (r : list MetaRule) : list Rule :=
   map (get_rule a) r.
@@ -77,9 +77,9 @@ End SkepticTypes.
 Section Blocki.
 
 (** Applies `nth` to a list for many indices, returning a list of results.
-  *   1. `n` is the list of indices at which to retrieve members
-  *   2. `l` is the list from which to retrieve members
-  *   3. `default` is the value to use in case an index is out of bounds
+    - [n] is the list of indices at which to retrieve members
+    - [l] is the list from which to retrieve members
+    - [default] is the value to use in case an index is out of bounds
   *)
 Fixpoint nths {A : Type} (n : list nat) (l : list A) (default : A) {struct n} : list A :=
   match n with
@@ -88,29 +88,29 @@ Fixpoint nths {A : Type} (n : list nat) (l : list A) (default : A) {struct n} : 
   end. (* TODO: Move this somewhere else. *)
 
 (** Gets a policy using the positive scheme from a rule list given a set of rule activations.
-  *   1. `r` is the rule list from which to get concerned passwords
-  *   2. `n` is the set of rule activations to use to get concerned passwords
+    - [r] is the rule list from which to get concerned passwords
+    - [n] is the set of rule activations to use to get concerned passwords
   *)
 Definition activate (r : list Rule) (act : set Activation) : Policy :=
   fold_left (set_union string_dec) (nths act r nil) nil.
 
 (** Gets a policy using the negative scheme from a rule list given a set of rule activations.
-  *   1. `r` is the rule list from which to get concerned passwords
-  *   2. `n` is the set of rule activations to use to get concerned passwords
+    - [r] is the rule list from which to get concerned passwords
+    - [n] is the set of rule activations to use to get concerned passwords
   *)
 Definition activate_neg (att : Attack) (r : list Rule) (act : set Activation) : Policy :=
   set_diff string_dec att (activate r act).
 
 (** Boolean equality for ASCII characters.
-  *   1. `a` is the first character
-  *   2. `b` is the second character
+    - [a] is the first character
+    - [b] is the second character
   *)
 Definition beq_ascii (a b : ascii) : bool :=
   beq_nat (nat_of_ascii a) (nat_of_ascii b). (* TODO: Move somewhere else. *)
 
 (** Boolean equality for strings.
-  *   1. `a` is the first string
-  *   2. `b` is the second string
+    - [a] is the first string
+    - [b] is the second string
   *)
 Fixpoint beq_string (a b : string) : bool :=
   match a, b with
@@ -120,8 +120,8 @@ Fixpoint beq_string (a b : string) : bool :=
   end. (* TODO: Move somewhere else. *)
 
 (** Boolean policy compliance for password `pwd` with policy `p`.
-  *   1. `p` is the policy to check for compliance with
-  *   2. `pwd` is the password to check for compliance with `p`
+    - [p] is the policy to check for compliance with
+    - [pwd] is the password to check for compliance with `p`
   *)
 Definition compliesb (p : Policy) (pwd : Password) : bool :=
   existsb (beq_string pwd) p.
@@ -136,25 +136,25 @@ Local Open Scope Q_scope.
  *)
 
 (** Calculates the probability of a password under a policy according to some function.
-  *   1. `p` is the policy under which to compute password probability
-  *   2. `f` is the probabilty calculation function
-  *   3. `pwd` is the password to compute the probability for
+    - [p] is the policy under which to compute password probability
+    - [f] is the probabilty calculation function
+    - [pwd] is the password to compute the probability for
   *)
 Definition probability (p : Policy) (f : Password -> Q) (pwd : Password) : Q :=
   if compliesb p pwd then f pwd else 0. (* Users might come in via `f`. *)
 
 (** Calculates the probabilities of a set of passwords under a policy according to come function.
-  *   1. `p` is the policy under which to compute password probability
-  *   2. `f` is the probabilty calculation function
-  *   3. `pwds` is the set of passwords to compute the probability for
+    - [p] is the policy under which to compute password probability
+    - [f] is the probabilty calculation function
+    - [pwds] is the set of passwords to compute the probability for
   *)
 Definition probabilities (p : Policy) (f : Password -> Q) (pwds : set Password) : list Q :=
   map (probability p f) pwds.
 
 (** Computes the sum of all probabilities for a set of passwords under a policy.
-  *   1. `p` is the policy under which to compute password probability
-  *   2. `f` is the probabilty calculation function
-  *   3. `pwds` is the set of passwords to compute the probability for
+    - [p] is the policy under which to compute password probability
+    - [f] is the probabilty calculation function
+    - [pwds] is the set of passwords to compute the probability for
   *)
 Definition sum_probabilities (p : Policy) (f : Password -> Q) (pwds : set Password) : Q :=
   fold_left Qplus (probabilities p f pwds) 0.
