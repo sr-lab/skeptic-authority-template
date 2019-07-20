@@ -51,6 +51,10 @@ def fill_template (path, subs):
 MAKEFILE_DIST = './src/Makefile.dist'
 MAKEFILE_OUT = './src/Makefile'
 
+# Authority in and out paths.
+AUTH_DIST = './src/Authority.v.dist'
+AUTH_OUT =  './src/Authority.v'
+
 # Copy Makefile template.
 copyfile(MAKEFILE_DIST, MAKEFILE_OUT)
 print('Copied', MAKEFILE_DIST, 'to', MAKEFILE_OUT)
@@ -59,6 +63,10 @@ print('Copied', MAKEFILE_DIST, 'to', MAKEFILE_OUT)
 root_ns = input('What root namespace would you like your code to reside under? ')
 fill_template('./src/Makefile', [('root_ns', root_ns)])
 print('Root namespace populated in', MAKEFILE_OUT)
+
+# Copy authority template.
+copyfile(AUTH_DIST, AUTH_OUT)
+print('Copied', AUTH_DIST, 'to', AUTH_OUT)
 
 # Gather config params from user.
 config_params = []
