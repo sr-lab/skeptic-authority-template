@@ -1,4 +1,5 @@
 import re
+import os
 from shutil import copyfile
 
 
@@ -77,8 +78,8 @@ while buffer.lower() == 'y':
     config_params.append((name, type))
     buffer = input('Add another parameter? [y/N] ')
 
-# Export config  params to template.
-fill_template('./src/Authority.v', [('config_params', ' * '.join([param[1] for param in config_params]))])
+# Export config params to template.
+fill_template(AUTH_OUT, [('config_params', ' * '.join([param[1] for param in config_params]))])
 
 buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
 pols = []
@@ -91,4 +92,11 @@ while buffer.lower() == 'y':
     pols.append((name, ', '.join(vals)))
     buffer = input('Add another policy? [y/N] ')
 
-fill_template('./src/Authority.v', [('config_lookups', '\n  '.join([f'| "{pol[0]}" => Some ({pol[1]})' for pol in pols]))])
+# Export config lookups to template.
+fill_template(AUTH_OUT, [('config_lookups', '\n  '.join([f'| "{pol[0]}" => Some ({pol[1]})' for pol in pols]))])
+
+# Delete templates if requested.
+buffer = input('All done, delete template files? [y/N] ')
+if buffer == 'y':
+    os.remove(MAKEFILE_DIST)
+    os.remove(AUTH_DIST)
