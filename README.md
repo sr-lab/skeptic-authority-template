@@ -175,4 +175,4 @@ A total of 10 passwords will be read before the application exits, like we speci
 Compiled Skeptic authorities can be used with [Pyrrho](https://github.com/sr-lab/pyrrho) to filter and renormalise password probability distributions computed from large datasets. For instructions on doing this, consult that repository.
 
 ## References
-1. Blocki, Jeremiah & Komanduri, Saranga & Procaccia, Ariel & Sheffet, Or. (2013). Optimizing Password Composition Policies. 10.1145/2482540.2482552. \[[PDF](https://arxiv.org/pdf/1302.5101.pdf)\]
+1. Jeremiah Blocki, Saranga Komanduri, Ariel Procaccia, and Or Sheffet. 2013. Optimizing password composition policies. In Proceedings of the fourteenth ACM conference on Electronic commerce (EC'13). DOI: https://doi.org/10.1145/2482540.2482552. \[[PDF](https://arxiv.org/pdf/1302.5101.pdf)\]
