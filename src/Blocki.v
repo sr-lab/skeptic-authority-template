@@ -19,6 +19,10 @@ Section FundamentalTypes.
   *)
 Definition Password := string.
 
+(** Define a probability distribution type mapping passwords to probabilities.
+  *)
+Definition Distribution := Password -> Q.
+
 End FundamentalTypes.
 
 
@@ -85,7 +89,7 @@ Fixpoint nths {A : Type} (n : list nat) (l : list A) (default : A) {struct n} : 
   match n with
   | i :: n' => nth i l default :: nths n' l default
   | _ => nil
-  end. (* TODO: Move this somewhere else. *)
+  end.
 
 (** Gets a policy using the positive scheme from a rule list given a set of rule activations.
     - [r] is the rule list from which to get concerned passwords
@@ -106,7 +110,7 @@ Definition activate_neg (att : Attack) (r : list Rule) (act : set Activation) : 
     - [b] is the second character
   *)
 Definition beq_ascii (a b : ascii) : bool :=
-  beq_nat (nat_of_ascii a) (nat_of_ascii b). (* TODO: Move somewhere else. *)
+  beq_nat (nat_of_ascii a) (nat_of_ascii b).
 
 (** Boolean equality for strings.
     - [a] is the first string
@@ -129,38 +133,38 @@ Definition compliesb (p : Policy) (pwd : Password) : bool :=
 Local Open Scope Q_scope.
 
 (* So, for Pwned Passwords, the probability function `f` would count the number of occurrences of a the given password
- * in Pwned Passwords and divide this by the number of entries in Pwned Passwords in total. This yields a probabilty.
+ * in Pwned Passwords and divide this by the number of entries in Pwned Passwords in total. This yields a probability.
  *
  * Not all passwords are represented in the attack, so we cannot merely rank passwords in the attack as a user might
  * choose them. Users may prefer passwords that are not in the attack!
  *)
 
-(** Calculates the probability of a password under a policy according to some function.
+(** Calculates the probability of a password under a policy according to some probability distribution.
     - [p] is the policy under which to compute password probability
-    - [f] is the probabilty calculation function
+    - [f] is the probability distribution
     - [pwd] is the password to compute the probability for
   *)
-Definition probability (p : Policy) (f : Password -> Q) (pwd : Password) : Q :=
+Definition probability (p : Policy) (f : Distribution) (pwd : Password) : Q :=
   if compliesb p pwd then f pwd else 0. (* Users might come in via `f`. *)
 
-(** Calculates the probabilities of a set of passwords under a policy according to come function.
+(** Calculates the probabilities of a set of passwords under a policy according to some probability distribution.
     - [p] is the policy under which to compute password probability
-    - [f] is the probabilty calculation function
+    - [f] is the probability distribution
     - [pwds] is the set of passwords to compute the probability for
   *)
-Definition probabilities (p : Policy) (f : Password -> Q) (pwds : set Password) : list Q :=
+Definition probabilities (p : Policy) (f : Distribution) (pwds : set Password) : list Q :=
   map (probability p f) pwds.
 
 (** Computes the sum of all probabilities for a set of passwords under a policy.
     - [p] is the policy under which to compute password probability
-    - [f] is the probabilty calculation function
+    - [f] is the probability distribution
     - [pwds] is the set of passwords to compute the probability for
   *)
-Definition sum_probabilities (p : Policy) (f : Password -> Q) (pwds : set Password) : Q :=
+Definition sum_probabilities (p : Policy) (f : Distribution) (pwds : set Password) : Q :=
   fold_left Qplus (probabilities p f pwds) 0.
 
-(* Intuitively, sum_probabilities p f pwds will yield the probability that an attacker will be able to guess a password
- * using `pwds`. [Blocki et al. 2013 p.6]
+(* Intuitively, `sum_probabilities p f pwds` will yield the probability that an attacker will be able to guess a
+ * password using `pwds`. [Blocki et al. 2013 p.6]
  *)
 
 End Blocki.
