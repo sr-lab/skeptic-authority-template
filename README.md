@@ -1,6 +1,8 @@
 # Skeptic Authority Template
 A basic template for a Skeptic authority.
 
+![Logo](assets/logo-text-h.svg)
+
 ## Overview
 A Skeptic _authority_ is an application, written in Coq and utilising [Coq.io](http://coq.io/), that accepts or rejects passwords based on password composition policies refined from  configuration parameters specified with respect to some piece of password composition policy enforecment software. Because we do this from within Coq, we are granted the freedom to write theorems to verify that our transformation of software-specific configuration parameters to a low-level predicate-based representation of password composition policies is correct.
 
