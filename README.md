@@ -176,5 +176,8 @@ A total of 10 passwords will be read before the application exits, like we speci
 ## Utility
 Compiled Skeptic authorities can be used with [Pyrrho](https://github.com/sr-lab/pyrrho) to filter and renormalise password probability distributions computed from large datasets. For instructions on doing this, consult that repository.
 
+## Acknowledgements
+* The font used in the logo is [Monofur](https://www.dafont.com/monofur.font) by Tobias Benjamin Köhler.
+
 ## References
 1. Jeremiah Blocki, Saranga Komanduri, Ariel Procaccia, and Or Sheffet. 2013. Optimizing password composition policies. In Proceedings of the fourteenth ACM conference on Electronic commerce (EC '13). ACM, New York, NY, USA, 105-122. DOI: https://doi.org/10.1145/2492002.2482552 \[[PDF](https://arxiv.org/pdf/1302.5101.pdf)\]
