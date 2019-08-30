@@ -28,16 +28,20 @@ def replace_in_file (path, subs):
             file.write(line)
 
 
-def bracket_sub (sub):
+def bracket_sub (sub, commenting=False):
     """ Brackets a substitution pair.
 
     Args:
         sub (tuple): The substitution pair to bracket.
+        commenting (bool): Whether or not to comment the bracketed pair.
 
     Returns:
         tuple: The bracketed substitution pair.
     """
-    return ('\{\{\\s*' + sub[0] + '\\s*\}\}', sub[1])
+    if commenting:
+        return ('\(\*\s*\{\{\\s*' + sub[0] + '\\s*\}\}\s*\*\)', sub[1])
+    else:
+        return ('\{\{\\s*' + sub[0] + '\\s*\}\}', sub[1])
 
 
 def fill_template (path, subs):
@@ -46,7 +50,21 @@ def fill_template (path, subs):
     Args:
         path (str): The path of the target file.
     """
-    replace_in_file(path, [bracket_sub(sub) for sub in subs])
+    # Substitute with and without commenting.
+    all_subs = [bracket_sub(sub, True) for sub in subs] + [bracket_sub(sub) for sub in subs]
+    replace_in_file(path, all_subs)
+
+
+def build_param_bul (param):
+    """ Builds a configuraiton parameter documentation bullet from a parameter tuple.
+
+    Args:
+        param (tuple): The paramter tuple.
+
+    Returns:
+        string: The documentation bullet markdown.
+    """
+    return param[0] + ' (' + param[1] + '): ' + param[2]
 
 
 # Makefile in and out paths.
@@ -76,13 +94,16 @@ buffer = input('Would you like to build your policy configuration parameters int
 while buffer.lower() == 'y':
     name = input('Please name your parameter: ')
     type = input(f'For parameter {name} please specify a type: ')
-    config_params.append((name, type))
+    description = input(f'Please describe the function of parameter {name}: ')
+    config_params.append((name, type, description))
     buffer = input('Add another parameter? [y/N] ')
 
 # Export config params and names to template.
 fill_template(AUTH_OUT, [('config_param_types', ' * '.join([param[1] for param in config_params]))])
 fill_template(AUTH_OUT, [('config_param_names', ', '.join([param[0] for param in config_params]))])
+fill_template(AUTH_OUT, [('config_param_descs', '\n    - '.join([build_param_bul(param) for param in config_params]))])
 
+# Interactively build policies.
 buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
 pols = []
 while buffer.lower() == 'y':

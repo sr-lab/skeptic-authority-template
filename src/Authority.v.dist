@@ -13,10 +13,13 @@ Import C.Notations.
 Open Scope string_scope.
 
 (** Definition of the data type for the password composition policy enforcement
-    software configuration parameters.
+    software configuration parameters. From first to last, parameters function
+    as follows:
+
+    - {{ config_param_descs }}
   *)
 Definition Configuration : Type :=
-  ({{ config_param_types }}).
+  ((* {{ config_param_types }} *)).
 
 (** Transforms a tuple containing software-specific configuration parameters
     to a list of meta-rules.
@@ -24,7 +27,7 @@ Definition Configuration : Type :=
   *)
 Definition transform (config : Configuration) : list MetaRule :=
   match config with
-  | ({{ config_param_names }}) => []
+  | ((* {{ config_param_names }} *)) => []
   end.
 
 (** Checks that a given password complies with every meta-rule in a list.
@@ -61,7 +64,7 @@ Fixpoint determine (rules : list MetaRule) (n : nat) : C.t System.effect unit :=
   *)
 Definition lookup_config (name : string) : option Configuration :=
   match name with
-  {{ config_lookups }}
+  (* {{ config_lookups }} *)
   | _ => None
   end.
 
