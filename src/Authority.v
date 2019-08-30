@@ -16,10 +16,11 @@ Open Scope string_scope.
     software configuration parameters. From first to last, parameters function
     as follows:
 
-    - {{ config_param_descs }}
+    - length (nat): The minimum password length.
+    - digits (nat): The minimum number of digits.
   *)
 Definition Configuration : Type :=
-  ((* {{ config_param_types }} *)).
+  (nat * nat).
 
 (** Transforms a tuple containing software-specific configuration parameters
     to a list of meta-rules.
@@ -27,7 +28,7 @@ Definition Configuration : Type :=
   *)
 Definition transform (config : Configuration) : list MetaRule :=
   match config with
-  | ((* {{ config_param_names }} *)) => []
+  | (length, digits) => []
   end.
 
 (** Checks that a given password complies with every meta-rule in a list.
@@ -64,7 +65,7 @@ Fixpoint determine (rules : list MetaRule) (n : nat) : C.t System.effect unit :=
   *)
 Definition lookup_config (name : string) : option Configuration :=
   match name with
-  (* {{ config_lookups }} *)
+  
   | _ => None
   end.
 
