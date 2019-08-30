@@ -55,6 +55,15 @@ def fill_template (path, subs):
     replace_in_file(path, all_subs)
 
 
+def build_param_bul (param):
+    """ Builds a configuraiton parameter documentation bullet from a parameter tuple.
+
+    Args:
+        param (tuple): The paramter tuple.
+    """
+    return param[0] + ' (' + param[1] + '): ' + param[2]
+
+
 # Makefile in and out paths.
 MAKEFILE_DIST = './src/Makefile.dist'
 MAKEFILE_OUT = './src/Makefile'
@@ -89,8 +98,9 @@ while buffer.lower() == 'y':
 # Export config params and names to template.
 fill_template(AUTH_OUT, [('config_param_types', ' * '.join([param[1] for param in config_params]))])
 fill_template(AUTH_OUT, [('config_param_names', ', '.join([param[0] for param in config_params]))])
-fill_template(AUTH_OUT, [('config_param_descs', '\n    - '.join([param[0] + ' (' + param[1] + '): ' + param[2] for param in config_params]))])
+fill_template(AUTH_OUT, [('config_param_descs', '\n    - '.join([build_param_bul(param) for param in config_params]))])
 
+# Interactively build policies.
 buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
 pols = []
 while buffer.lower() == 'y':
