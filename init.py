@@ -60,6 +60,9 @@ def build_param_bul (param):
 
     Args:
         param (tuple): The paramter tuple.
+
+    Returns:
+        string: The documentation bullet markdown.
     """
     return param[0] + ' (' + param[1] + '): ' + param[2]
 
