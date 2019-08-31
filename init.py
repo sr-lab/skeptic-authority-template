@@ -130,25 +130,25 @@ def append_policies (file):
     ex_types = re.findall(r'Definition\s*Configuration\s*:\s*Type\s*:=\s*\((.*?)\)\.', ex_file)
     if len(ex_types) == 0:
         print('Couldn\'t parse configuration parameter types out of your file. Aborting program.')
-        exit(0)
+        exit(1)
     ex_types = strip_all(ex_types[0].split('*')) # Split along asterisks (type).
     # Try to pull out existing configuration parameter names.``
     ex_names = re.findall(r'match\s*config\s*with\s*\|\s*\((.*?)\)', ex_file)
     if len(ex_names) == 0:
         print('Couldn\'t parse configuration parameter names out of your file. Aborting program.')
-        exit(0)
+        exit(1)
     ex_names = strip_all(ex_names[0].split(',')) # Split along commas (value).
     # Try to pull out existing configuration parameter descriptions.
     ex_desc_exps = [re.compile(pair[0] + '\s*\(\s*' + pair[1] + '\s*\):\s*(.+)') for pair in zip(ex_names, ex_types)]
     ex_descs = [re.findall(exp, ex_file) for exp in ex_desc_exps]
     if len(ex_descs) == 0:
         print('Couldn\'t parse configuration parameter descriptions out of your file. Aborting program.')
-        exit(0)
+        exit(1)
     ex_descs = strip_all([ex_desc[0] for ex_desc in ex_descs]) # Split along commas (value).
     # Check for agreement.
     if any(map(lambda x: x != len(ex_types), [len(ex_names), len(ex_descs)])):
         print('Couldn\'t get consistent name, type and description for all configuration parameters. Aborting program.')
-        exit(0)
+        exit(1)
     # Brief user on existing configuration parameters and confirm correctness.
     param_index = 1
     config_params = list(zip(ex_names, ex_types, ex_descs))
