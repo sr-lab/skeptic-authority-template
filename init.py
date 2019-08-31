@@ -3,10 +3,15 @@ import os
 import sys
 from shutil import copyfile
 
-#print re.findall(r'"(.*?)"', string)
-
 
 def read_file (path):
+    """ Reads the entire contents of a text file and returns it.
+
+    Args:
+        path (str): The path of the file to read.
+    Returns:
+        str: The contents of the file.
+    """
     buffer = []
     with open(path) as file:
         for line in file:
@@ -38,30 +43,32 @@ def replace_in_file (path, subs):
             file.write(line)
 
 
-def bracket_sub (sub, commenting=False):
+def bracket_sub (sub, comment=False):
     """ Brackets a substitution pair.
 
     Args:
         sub (tuple): The substitution pair to bracket.
-        commenting (bool): Whether or not to comment the bracketed pair.
+        comment (bool): Whether or not to comment the bracketed pair.
 
     Returns:
         tuple: The bracketed substitution pair.
     """
-    if commenting:
+    if comment:
         return ('\(\*\s*\{\{\\s*' + sub[0] + '\\s*\}\}\s*\*\)', sub[1])
     else:
         return ('\{\{\\s*' + sub[0] + '\\s*\}\}', sub[1])
 
 
-def fill_template (path, subs, comms=False):
+def fill_template (path, subs, comment=False):
     """ Fills a template file.
 
     Args:
         path (str): The path of the target file.
+        subs (list of tuple): The list of substitution pairs.
+        comment (bool): Whether or not to replace commented tempalating expressions.
     """
     # Substitute with and without commenting.
-    all_subs = [bracket_sub(sub, comms) for sub in subs]
+    all_subs = [bracket_sub(sub, comment) for sub in subs]
     replace_in_file(path, all_subs)
 
 
@@ -69,7 +76,7 @@ def build_param_bul (param):
     """ Builds a configuration parameter documentation bullet from a parameter tuple.
 
     Args:
-        param (tuple): The paramter tuple.
+        param (tuple): The parameter tuple.
 
     Returns:
         string: The documentation bullet markdown.
@@ -77,9 +84,15 @@ def build_param_bul (param):
     return param[0] + ' (' + param[1] + '): ' + param[2]
 
 
-def build_policies (path, config_params):
-    print(config_params)
-    buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ')
+def build_policies (path, config_params, prompt=True):
+    """ Builds policies interactively according to the given configuration parameters.
+
+    Args:
+        path (str): The path of the authority file to write to.
+        config_params (list of tuple): The configuration parameter tuples.
+        prompt (bool): If true, the user will be able to opt out.
+    """
+    buffer = input('Would you like to preconfigure some policies interactively now? [y/N] ') if prompt else 'y'
     pols = []
     while buffer.lower() == 'y':
         name = input('Please name your policy: ')
@@ -95,37 +108,50 @@ def build_policies (path, config_params):
 
 
 def strip_all (lst):
+    """ Strips leading and trailing whitespace from all strings in a list.
+
+    Args:
+        lst (list of str): The list of strings to strip.
+
+    Returns:
+        list of str: The list of stripped strings.
+    """
     return list(map(lambda x: x.strip(), lst))
 
 
 def append_policies (file):
-    existing_file = read_file(AUTH_OUT) # Read in existing authority.
-    # Try to pull out types.
-    rv_types = re.findall(r'Definition\s*Configuration\s*:\s*Type\s*:=\s*\((.*?)\)\.', existing_file)
-    if len(rv_types) == 0:
+    """ Attempts to append policies to an existing authority file.
+
+    Args:
+        file (str): The path of the existing authority file.
+    """
+    ex_file = read_file(AUTH_OUT) # Read in existing authority.
+    # Try to pull out existing configuration parameter types.
+    ex_types = re.findall(r'Definition\s*Configuration\s*:\s*Type\s*:=\s*\((.*?)\)\.', ex_file)
+    if len(ex_types) == 0:
         print('Couldn\'t parse configuration parameter types out of your file. Aborting program.')
         exit(0)
-    rv_types = strip_all(rv_types[0].split('*')) # Split along asterisks (type).
-    # Try to pull out names.``
-    rv_names = re.findall(r'match\s*config\s*with\s*\|\s*\((.*?)\)', existing_file)
-    if len(rv_names) == 0:
+    ex_types = strip_all(ex_types[0].split('*')) # Split along asterisks (type).
+    # Try to pull out existing configuration parameter names.``
+    ex_names = re.findall(r'match\s*config\s*with\s*\|\s*\((.*?)\)', ex_file)
+    if len(ex_names) == 0:
         print('Couldn\'t parse configuration parameter names out of your file. Aborting program.')
         exit(0)
-    rv_names = strip_all(rv_names[0].split(',')) # Split along commas (value).
-    # Try to pull out descriptions.
-    rv_desc_exps = [re.compile(pair[0] + '\s*\(\s*' + pair[1] + '\s*\):\s*(.+)') for pair in zip(rv_names, rv_types)]
-    rv_descs = [re.findall(exp, existing_file) for exp in rv_desc_exps]
-    if len(rv_descs) == 0:
+    ex_names = strip_all(ex_names[0].split(',')) # Split along commas (value).
+    # Try to pull out existing configuration parameter descriptions.
+    ex_desc_exps = [re.compile(pair[0] + '\s*\(\s*' + pair[1] + '\s*\):\s*(.+)') for pair in zip(ex_names, ex_types)]
+    ex_descs = [re.findall(exp, ex_file) for exp in ex_desc_exps]
+    if len(ex_descs) == 0:
         print('Couldn\'t parse configuration parameter descriptions out of your file. Aborting program.')
         exit(0)
-    rv_descs = strip_all([rv_desc[0] for rv_desc in rv_descs]) # Split along commas (value).
+    ex_descs = strip_all([ex_desc[0] for ex_desc in ex_descs]) # Split along commas (value).
     # Check for agreement.
-    if any(map(lambda x: x != len(rv_types), [len(rv_types), len(rv_names), len(rv_descs)])):
+    if any(map(lambda x: x != len(ex_types), [len(ex_names), len(ex_descs)])):
         print('Couldn\'t get consistent name, type and description for all configuration parameters. Aborting program.')
         exit(0)
-    # Brief user on configuration parameters.
+    # Brief user on existing configuration parameters and confirm correctness.
     param_index = 1
-    config_params = list(zip(rv_names, rv_types, rv_descs))
+    config_params = list(zip(ex_names, ex_types, ex_descs))
     print('The authority seems to support the following configuration parameters:')
     for config_param in config_params:
         print(f'{param_index}. {config_param[0]} in type {config_param[1]}')
@@ -136,8 +162,8 @@ def append_policies (file):
     if conf.lower() != 'y':
         print('Aborting program.')
         exit(0)
-    # Proceed to build policies.
-    build_policies(file, config_params)
+    # Proceed to build policies interactively.
+    build_policies(file, config_params, False)
 
 
 # Makefile in and out paths.
