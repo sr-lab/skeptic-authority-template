@@ -19,7 +19,7 @@ Open Scope string_scope.
     - {{ config_param_descs }}
   *)
 Definition Configuration : Type :=
-  ((* {{ config_param_types }} *)).
+  ({{ config_param_types }}).
 
 (** Transforms a tuple containing software-specific configuration parameters
     to a list of meta-rules.
@@ -27,7 +27,7 @@ Definition Configuration : Type :=
   *)
 Definition transform (config : Configuration) : list MetaRule :=
   match config with
-  | ((* {{ config_param_names }} *)) => []
+  | ({{ config_param_names }}) => []
   end.
 
 (** Checks that a given password complies with every meta-rule in a list.
