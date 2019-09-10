@@ -129,7 +129,7 @@ Definition transform (config : Configuration) : list MetaRule :=
   end.
 ```
 
-For now, let's just add in a predicate that checks string length as below. Adding in functionality such that `digits` and `dict` are no longer ignored is left out for the purposes of this demonstration.
+For now, let's just add in a predicate that checks string length as below. Adding in functionality such that `digits` and `dict` are no longer ignored is left out for the purposes of this demonstration, though dictionary checks can take advantage of the bundled `Io.v` library which uses [our generic implementation of tries](https://github.com/sr-lab/coq-tries) for efficient lookups.
 
 ```coq
 (** Transforms a tuple containing software-specific configuration parameters
