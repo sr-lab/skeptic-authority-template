@@ -47,3 +47,15 @@ Definition load_dict (path : string) : C.t effect (option (Trie ascii unit)) :=
   | Some lines => ret (Some (load_dict' lines (empty_trie ascii unit)))
   | _ => ret None
   end.
+
+(** Loads a lookup containing dictionaries located at the given paths.
+    - [paths] the list of paths
+  *)
+Fixpoint load_dicts (paths : list string) : C.t effect (list (string * option (Trie ascii unit))) :=
+  match paths with
+  | path :: paths' =>
+    let! dict_opt := load_dict path in
+    let! rest := load_dicts paths' in
+    ret ((path, dict_opt) :: rest)
+  | [] => ret []
+  end.
