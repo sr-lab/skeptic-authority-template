@@ -32,9 +32,9 @@ Definition load_lines (path : string) : C.t effect (option (list LString.t)) :=
     - [lines] the list of list strings
     - [trie] the trie to build on
   *)
-Definition load_dict' (lines : list LString.t) (trie : Trie ascii unit) : Trie ascii unit :=
+Fixpoint load_dict' (lines : list LString.t) (trie : Trie ascii unit) : Trie ascii unit :=
   match lines with
-  | line :: lines' => trie_insert ascii_dec trie line tt
+  | line :: lines' => load_dict' lines' (trie_insert ascii_dec trie line tt)
   | [] => trie
   end.
 
@@ -58,4 +58,14 @@ Fixpoint load_dicts (paths : list string) : C.t effect (list (string * option (T
     let! rest := load_dicts paths' in
     ret ((path, dict_opt) :: rest)
   | [] => ret []
+  end.
+
+Fixpoint lookup {K V : Type} (dec : forall a b : K, {a = b} + {a <> b}) (ps : list (K * V)) (k : K) : option V :=
+  match ps with
+  | p :: ps' =>
+    match dec (fst p) k with
+    | left _ => Some (snd p)
+    | right _ => lookup dec ps' k
+    end
+  | [] => None
   end.
