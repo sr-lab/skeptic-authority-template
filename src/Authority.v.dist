@@ -72,6 +72,7 @@ Definition lookup_config (name : string) : option Configuration :=
     - [argv] is the list of command-line arguments
   *)
 Definition authority (argv : list LString.t) : C.t System.effect unit :=
+  do! System.log (LString.s "ready") in
   match argv with
   | _ :: config_name :: count :: [] =>
     match lookup_config (LString.to_string config_name) with
